@@ -1,0 +1,29 @@
+url: https://jasmcole.github.io
+baseurl: 
+
+# Site settings
+title: jasmcole.github.io
+email: jcole730@gmail.com
+description: "The personal website of Jason Cole."
+
+# Color settings (hex-codes without the leading hash-tag)
+color:
+  primary: f80341
+  secondary: f10541
+  secondary-dark: 333
+
+
+# Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
+social:
+  - title: twitter
+    url: http://twitter.com/jekyllrb
+  - title: stack-overflow
+    url: http://stackoverflow.com/questions/tagged/jekyll
+  - title: bitbucket
+    url: http://bitbucket.org/jekyll
+  - title: github
+    url: http://github.com/jekyll
+
+# Build settings
+markdown: kramdown
+permalink: pretty
