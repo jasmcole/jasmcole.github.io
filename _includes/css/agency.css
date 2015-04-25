@@ -176,7 +176,7 @@ fieldset[disabled] .btn-xl.active {
 }
 
 .navbar-default .navbar-brand {
-    font-family: "Kaushan Script","Helvetica Neue",Helvetica,Arial,cursive;
+    font-family: "Varela Round","Helvetica Neue",Helvetica,Arial,cursive;
     color: #{{ site.color.primary }};
 }
 
@@ -254,7 +254,7 @@ fieldset[disabled] .btn-xl.active {
 
     .navbar-default.navbar-shrink {
         padding: 10px 0;
-        background-color: #aaa;
+        background-color: #ccc;
     }
 
     .navbar-default.navbar-shrink .navbar-brand {
@@ -654,13 +654,17 @@ aside.clients img {
 }
 
 section#contact {
-    background-color: #222;
+    background-color: #{{ site.color.primary }};
     background-image: url(../img/map-image.png);
     background-position: center;
     background-repeat: no-repeat;
 }
 
 section#contact .section-heading {
+    color: #fff;
+}
+
+section#contact .section-subheading {
     color: #fff;
 }
 

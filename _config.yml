@@ -8,21 +8,23 @@ description: "The personal website of Jason Cole."
 
 # Color settings (hex-codes without the leading hash-tag)
 color:
-  primary: f80341
+  primary: c70000
   secondary: 111111
   secondary-dark: 333
 
 
 # Social networks usernames (many more available: google-plus, flickr, dribbble, pinterest, instagram, tumblr, linkedin, etc.)
 social:
+  - title: mortar-board
+    url: http://www3.imperial.ac.uk/johnadamsinstitute/team
+  - title: wordpress
+    url: http://www.jasmcole.com
+  - title: google-plus
+    url: https://plus.google.com/112991282536415123341/posts
   - title: twitter
-    url: http://twitter.com/jekyllrb
-  - title: stack-overflow
-    url: http://stackoverflow.com/questions/tagged/jekyll
-  - title: bitbucket
-    url: http://bitbucket.org/jekyll
+    url: http://twitter.com/jasmcole
   - title: github
-    url: http://github.com/jekyll
+    url: http://github.com/jasmcole
 
 # Build settings
 markdown: kramdown
