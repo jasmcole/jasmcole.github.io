@@ -120,8 +120,8 @@ fieldset[disabled] .btn-primary.active {
 
 .btn-xl {
     padding: 20px 40px;
-    border-color: #{{ site.color.primary }};
-    border-radius: 3px;
+    border-color: none;
+    border-radius: 10px;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 18px;
@@ -371,7 +371,7 @@ section h3.section-subheading {
     -webkit-transition: all ease .5s;
     -moz-transition: all ease .5s;
     transition: all ease .5s;
-    background: rgba(254,209,54,.9); /* Fallback when no plugin support */
+    background: rgba(199,0,0,.8); /* Fallback when no plugin support */
     background: rgba({{ site.color.primary | hex_to_rgb | join: ',' }}, .9);
 }
 
