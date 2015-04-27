@@ -1,5 +1,5 @@
 ---
-title: Fourier Vase
+title: Fourier Vases
 subtitle: Blog post
 layout: default
 modal-id: 3

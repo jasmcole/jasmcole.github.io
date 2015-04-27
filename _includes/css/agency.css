@@ -414,10 +414,10 @@ section h3.section-subheading {
 
 #portfolio .portfolio-item .portfolio-caption {
     margin: 0 auto;
-    padding: 25px;
+    padding: 15px;
     max-width: 400px;
     text-align: center;
-    background-color: #fff;
+    background-color: #eee;
 }
 
 #portfolio .portfolio-item .portfolio-caption h4 {
@@ -504,11 +504,17 @@ section h3.section-subheading {
     width: 80px;
     height: 80px;
     margin-left: 0;
-    border: 7px solid #f1f1f1;
+    /*border: 7px solid #f1f1f1;*/
+    border: 7px solid #ddd;
     border-radius: 100%;
     text-align: center;
     color: #fff;
     background-color: #{{ site.color.primary }};
+}
+
+section#about img:hover {
+    -webkit-filter: blur(1px);
+    filter: blur(1px);
 }
 
 .timeline>li .timeline-image h4 {
@@ -642,28 +648,16 @@ section h3.section-subheading {
     }
 }
 
-.team-member {
-    margin-bottom: 50px;
-    text-align: center;
+section#clients img {
+    margin: 30px auto;
+    height: 100px;
+    -webkit-filter: grayscale(100%) brightness(1.5);
+    filter: grayscale(100%) brightness(1.5);
 }
 
-.team-member img {
-    margin: 0 auto;
-    border: 7px solid #fff;
-}
-
-.team-member h4 {
-    margin-top: 25px;
-    margin-bottom: 0;
-    text-transform: none;
-}
-
-.team-member p {
-    margin-top: 0;
-}
-
-aside.clients img {
-    margin: 50px auto;
+section#clients img:hover {
+    -webkit-filter: grayscale(0%) brightness(1);
+    filter: grayscale(0%) brightness(1);
 }
 
 section#contact {
