@@ -351,9 +351,22 @@ section h3.section-subheading {
     text-transform: none;
 }
 
+.service-body {
+    text-align: justify;
+}
+
 #portfolio .portfolio-item {
     right: 0;
     margin: 0 0 15px;
+}
+
+#portfolio .portfolio-image {
+    width: auto;
+    max-height: 200px;
+    min-height: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 #portfolio .portfolio-item .portfolio-link {
@@ -776,16 +789,18 @@ ul.social-buttons li a:active {
 
 .portfolio-modal .modal-content {
     padding: 100px 0;
-    min-height: 100%;
     border: 0;
     border-radius: 0;
-    text-align: center;
+    text-align: justify;
     background-clip: border-box;
     -webkit-box-shadow: none;
     box-shadow: none;
+    height: 100%;
+    overflow-y: scroll;
 }
 
 .portfolio-modal .modal-content h2 {
+    text-align: left;
     margin-bottom: 15px;
     font-size: 3em;
 }
