@@ -1,7 +1,8 @@
 <!-- Clients Aside -->
 <section id="clients" class="bg-white">
-    <!--<aside class="clients">-->
+
       <div class="container">
+
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">Press</h2>
@@ -9,34 +10,16 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-2 col-md-offset-1 col-sm-6">
-                    <a href="http://www.theguardian.com/science/blog/2015/mar/26/how-particle-accelerator-maths-helped-me-fix-my-wi-fi">
-                        <img src="img/logos/guardianlogo.jpg" class="img-responsive img-centered" alt="" height="60">
-                    </a>
-                </div>
-
-                <div class="col-md-2 col-sm-6">
-                    <a href="http://wordplay.blogs.nytimes.com/2014/09/08/bugs/?_r=0">
-                        <img src="img/logos/Icon_NYT.jpg" class="img-responsive img-centered" alt="" height="60">
-                    </a>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <a href="http://www.engadget.com/2014/09/01/wifi-physics-signal-reception/#continued">
-                        <img src="img/logos/Icon_engadget.png" class="img-responsive img-centered" alt="" height="60">
-                    </a>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <a href="http://arstechnica.com/gadgets/2014/08/27/mapping-wi-fi-dead-zones-with-physics-and-gifs/">
-                        <img src="img/logos/Icon_ars.png" class="img-responsive img-centered" alt="">
-                    </a>
-                </div>
-                <div class="col-md-2 col-sm-6">
-                    <a href="http://www.dailymail.co.uk/sciencetech/article-2735856/The-physics-WIFI-ROUTER-Scientist-proves-centre-home-best-signal-strength.html">
-                        <img src="img/logos/Icon_DM.png" class="img-responsive img-centered" alt="">
-                    </a>
-                </div>
-            </div>
+            <div class="col-lg-12 text-center">
+                <ul class="list-inline press">
+                  {% for publication in site.press %}
+                    <li>
+                      <a href="{{ publication.url }}">
+                        <img src="img/logos/{{ publication.img }}" class="img-responsive img-centered" alt="" height="60">
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
         </div>
-    <!--</aside>-->
 </section>

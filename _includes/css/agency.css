@@ -749,6 +749,13 @@ footer ul.quicklinks {
     line-height: 40px;
 }
 
+ul.press li{
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 ul.social-buttons {
     margin-bottom: 5px;
     margin-top: 5px;
