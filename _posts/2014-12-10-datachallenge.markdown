@@ -2,7 +2,7 @@
 title: Summer Data Challenge
 subtitle: Contest win
 layout: default
-modal-id: 4
+modal-id: 3
 date: 2014-12-10
 img: AvPrices.png
 thumbnail: AvPricesThumb.png

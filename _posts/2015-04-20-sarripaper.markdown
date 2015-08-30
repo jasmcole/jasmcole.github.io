@@ -2,7 +2,7 @@
 title: Making antimatter plasma
 subtitle: Journal article
 layout: default
-modal-id: 2
+modal-id: 4
 date: 2015-04-20
 img: natcomms.png
 thumbnail: natcomms.png

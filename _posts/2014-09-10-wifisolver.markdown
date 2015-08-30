@@ -2,7 +2,7 @@
 title: WiFi Solver
 subtitle: Android App
 layout: default
-modal-id: 5
+modal-id: 2
 date: 2014-09-10
 img: wifisolver_screen.png
 thumbnail: wifisolver.png
