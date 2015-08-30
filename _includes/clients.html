@@ -1,7 +1,8 @@
 <!-- Clients Aside -->
 <section id="clients" class="bg-white">
-    <!--<aside class="clients">-->
+
       <div class="container">
+
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">Press</h2>
@@ -9,6 +10,7 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
             <div class="row">
                 <div class="col-md-2 col-sm-6">
                     <a href="http://www.theguardian.com/science/blog/2015/mar/26/how-particle-accelerator-maths-helped-me-fix-my-wi-fi">
@@ -43,6 +45,18 @@
                 </div>
 
             </div>
+=======
+            <div class="col-lg-12 text-center">
+                <ul class="list-inline press">
+                  {% for publication in site.press %}
+                    <li>
+                      <a href="{{ publication.url }}">
+                        <img src="img/logos/{{ publication.img }}" class="img-responsive img-centered" alt="" height="60">
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+>>>>>>> origin/master
         </div>
-    <!--</aside>-->
 </section>
