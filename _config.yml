@@ -41,6 +41,8 @@ press:
     img: Icon_ars.png
   - url: http://www.dailymail.co.uk/sciencetech/article-2735856/The-physics-WIFI-ROUTER-Scientist-proves-centre-home-best-signal-strength.html
     img: Icon_DM.png
+  - url: http://www.ntv.ru/peredacha/chudo_tehniki/m24780/o333337
+    img: NTV.png
 
 # Build settings
 markdown: kramdown
