@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+
+<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="./css/normalize.css">
+<link rel="stylesheet" href="./css/skeleton.css">
+<link rel="stylesheet" href="./css/custom.css">
+
+<body>
+
+  <br>
+  <div class="container">
+    <div class="row">
+      <h1>MiData visualisation</h1>
+
+      This uses the simple line chart from Chart.js. See the function
+      <pre><code>makeLinePlot(x,y,context)</code></pre> for details.
+
+      <br><br>
+    </div>
+
+    <div class="row">
+      <label class="filebutton">
+        <input type="file" id="file-input" required/>
+        <span>Upload file</span>
+      </label>
+      <span id='filestatus'>No file uploaded</span>
+      <h4>Transaction analysis</h4>
+    </div>
+
+  </div>
+
+  <div class="container">
+    <pre id="file-content"></pre>
+
+    <div class="row">
+      <div class="three columns">
+        <h5>Cumulative total</h5>
+        This is the running total of the transactions.
+      </div>
+      <div class="nine columns">
+        <canvas id="cumulative"></canvas>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="three columns">
+        <h5>Individual transactions</h5>
+        These are all of the transactions from the file.
+      </div>
+      <div class="nine columns">
+        <canvas id="transactions"></canvas>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="three columns">
+        <h5>Positive transactions</h5>
+        This is a histogram of the credits to the account.<br><br>
+
+        <form action="javascript:updateHistogramParams('pos');">
+          Number of bins
+          <input type="number" id="nbinspos" min="1" max="50" value="20" style="width: 60px;">
+          <br>Range<br>
+          <input type="number" id="lowerpos" min="0" value="0" style="width: 80px;">
+          -
+          <input type="number" id="upperpos" min="0" value="2000" style="width: 80px;">
+          <input type="submit" style="visibility: hidden;" />
+        </form>
+
+      </div>
+      <div class="nine columns">
+        <canvas id="histpos"></canvas>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="three columns">
+        <h5>Negative transactions</h5>
+        This is a histogram of the debits from the account.<br><br>
+        <form action="javascript:updateHistogramParams('neg');">
+          Number of bins
+          <input type="number" id="nbinsneg" min="1" max="50" value="20" style="width: 60px;">
+          <br>Range<br>
+          <input type="number" id="lowerneg" max="0" value="-2000" style="width: 80px;">
+          -
+          <input type="number" id="upperneg" max="0" value="0" style="width: 80px;">
+          <input type="submit" style="visibility: hidden;" />
+        </form>
+
+      </div>
+      <div class="nine columns">
+        <canvas id="histneg"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background-color: #222222">
+    <div class="container">
+      <div class="row" style="margin-top: 30px; color: #FFF">
+        <div class="twelve columns" style="margin-top: 30px;">
+          <h4>About</h4>
+          <p>See the code at <a href="www.github.com/jasmcole">www.github.com/jasmcole</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="Chart.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>

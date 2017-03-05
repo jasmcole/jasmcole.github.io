@@ -1,0 +1,34 @@
+/* Move actual button off screen*/
+label.filebutton input[type="file"] {
+    position: fixed;
+    top: -1000px;
+}
+
+/* http://stackoverflow.com/questions/21842274/cross-browser-custom-styling-for-file-upload-button */
+.filebutton {
+    border: 0px solid #AAA;
+    border-radius: 2px;
+    padding: 10px 10px;
+    margin-bottom: 10px;
+    background: #DDD;
+    display: inline-block;
+    color: #FFF;
+    background-color: #33C3F0;
+    border-color: #33C3F0;
+}
+.filebutton:hover {
+    background: #222;
+}
+.filebutton:active {
+    background: #CCF;
+}
+.filebutton :invalid + span {
+    color: #FFF;
+}
+.filebutton :valid + span {
+    color: #FFF;
+}
+
+#filestatus {
+  margin-left: 10px;
+}
