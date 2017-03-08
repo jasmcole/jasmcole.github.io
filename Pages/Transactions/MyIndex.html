@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html>
 
-<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="./css/normalize.css">
 <link rel="stylesheet" href="./css/skeleton.css">
 <link rel="stylesheet" href="./css/custom.css">
@@ -11,11 +10,8 @@
   <br>
   <div class="container">
     <div class="row">
-      <h1>MiData visualisation</h1>
-
-      This uses the simple line chart from Chart.js. See the function
-      <pre><code>makeLinePlot(x,y,context)</code></pre> for details.
-
+      <h1>Transaction visualisation</h1>
+      This is a simple test of plotting and basic Javascript. All code should be considered to be in a half-finished state unless otherwise stated. Please send any bug reports or questions to me at the github link at the bottom of the page.
       <br><br>
     </div>
 
@@ -25,14 +21,41 @@
         <span>Upload file</span>
       </label>
       <span id='filestatus'>No file uploaded</span>
-      <h4>Transaction analysis</h4>
     </div>
 
   </div>
 
-  <div class="container">
-    <pre id="file-content"></pre>
+  <div style="background-color: #222222; color: #FFFFFF;">
+    <div class="container">
+      <div class="row">
+        <div class="three columns" style="margin-top: 10px;">
+          <h4>Data summary</h4>
+        </div>
 
+        <div class="three columns" style="margin-top: 15px;">
+          <button id="togglesummaryBtn" class="button-dark", onclick="minimiseTable()">Toggle summary</button>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="three columns">
+          Showing up to 50 rows.
+        </div>
+        <div class="nine columns">
+          <p>Select the column containing the transactions data, if it has not already been automatically selected.</p>
+        </div>
+      </div>
+
+      <div class="row" id="csvheadtable" style="margin-bottom: 10px;">
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="container" style="margin-top: 10px;">
+    <h4>Analysis</h4>
     <div class="row">
       <div class="three columns">
         <h5>Cumulative total</h5>
@@ -82,7 +105,7 @@
           Number of bins
           <input type="number" id="nbinsneg" min="1" max="50" value="20" style="width: 60px;">
           <br>Range<br>
-          <input type="number" id="lowerneg" max="0" value="-2000" style="width: 80px;">
+          <input type="number" id="lowerneg" max="0" value="-200" style="width: 80px;">
           -
           <input type="number" id="upperneg" max="0" value="0" style="width: 80px;">
           <input type="submit" style="visibility: hidden;" />
@@ -101,6 +124,8 @@
       <div class="row" style="margin-top: 30px; color: #FFF">
         <div class="twelve columns" style="margin-top: 30px;">
           <h4>About</h4>
+          <p> Written by Jason Cole, author of <a href="www.jasmcole.com">Almost Looks Like Work</a>.</p>
+
           <p>See the code at <a href="www.github.com/jasmcole">www.github.com/jasmcole</a></p>
         </div>
       </div>

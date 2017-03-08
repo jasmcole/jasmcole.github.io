@@ -1,7 +1,10 @@
 Chart.defaults.global.hover.mode = 'nearest';
 Chart.defaults.global.legend.display = false;
 
-var x = [], y = [], derived = {'ypos': 0, 'yneg': 0}, csum = [];
+var x = [], y = [], derived = {'pos': {'All': [0]}, 'neg': {'All': [0]}}, csum = [], data = [];
+var indextosample = -1;
+var headers = [], filename;
+var linecolors = ["rgba(52,195,240,1)", "rgba(75,92,192,1)", "rgba(192,75,75,1)"];
 
 var context = document.getElementById('cumulative').getContext('2d');
 makeLinePlot(0,0,'Cumulative total',context);
@@ -21,6 +24,7 @@ function readSingleFile(e) {
     var contents = e.target.result;
     filename = document.getElementById('file-input').files[0].name;
     document.getElementById('filestatus').innerHTML = 'Uploaded ' + filename;
+    document.getElementById('togglesummaryBtn').style.visbility = 'visible';
     displayContents(contents);
   };
   reader.readAsText(file);
@@ -29,7 +33,7 @@ function readSingleFile(e) {
 function linspace(a,b,n) {
   dx = (b - a)/(n - 1);
   var ret = [];
-  for(i=0;i<n;i++) {
+  for (i = 0; i < n; i++) {
     ret[i] = a + i*dx;
   }
   return ret;
@@ -54,27 +58,42 @@ function histogram(y, bins) {
 }
 
 function displayContents(contents) {
-  var data = contents.split(/\r\n|\n/);
+  data = contents.split(/\r\n|\n|\r/);
+  headers = data[0].split(',');
   data.reverse();
-  data = data.slice(300, data.length);
+  //data = data.slice(300, data.length);
+  indextosample = updateTable(headers);
+  if (indextosample > 0) {
+    createPlots(indextosample);
+  }
+}
 
-
+function createPlots(indextosample) {
+  document.getElementById('filestatus').innerHTML =
+    'Uploaded ' + filename + ', analysing column ' + headers[indextosample];
+  for (i = 0; i < headers.length; i++) {
+    if (i == indextosample) {
+      document.getElementById('headerBtn' + i).className = "button-primary";
+    } else {
+      document.getElementById('headerBtn' + i).className = "button-dark";
+    }
+  }
   csum[0] = 0;
   x[0] = 0;
-  y[0] = data[0].split(',')[3];
-  derived['ypos'] = [];
-  derived['yneg'] = [];
+  y[0] = data[0].split(',')[indextosample];
+  derived['pos']['All'] = [];
+  derived['neg']['All'] = [];
 
   for (i = 1; i < data.length-1; i++) {
     var items = data[i].split(',');
     x[i] = i;
-    y[i] = Number(items[3]);
+    y[i] = Number(items[indextosample]);
     csum[i] = csum[i-1] + y[i];
 
     if (y[i] > 0) {
-      derived['ypos'].push(y[i]);
+      derived['pos']['All'].push(y[i]);
     } else {
-      derived['yneg'].push(y[i]);
+      derived['neg']['All'].push(y[i]);
     }
 
   }
@@ -87,7 +106,49 @@ function displayContents(contents) {
 
   updateHistogramParams('pos');
   updateHistogramParams('neg');
+}
 
+function updateTable(headers) {
+  tdiv = document.getElementById('csvheadtable');
+  nrows = 50;
+
+  headerstr = '';
+  for (i = 0; i < headers.length; i++) {
+    if (headers[i] == 'Amount') {
+      indextosample = i;
+      buttonstr = '<th><button class="button-primary" id="headerBtn' + i + '" onclick="createPlots(' + i + ')">' + headers[i] + '</button></th>' + '\n';
+      console.log(buttonstr);
+      headerstr += buttonstr;
+    } else {
+      headerstr += '<th><button class="button-dark" id="headerBtn' + i + '" onclick="createPlots(' + i + ')">' + headers[i] + '</button></th>' + '\n';
+    }
+  }
+
+  contentstr = [];
+  for (i = 0; i < Math.min(nrows, data.length-1); i++) {// -1 to avoid headers row
+    row = data[i].split(',');
+    contentstr += '<tr>' + '\n';
+    for (j = 0; j < row.length; j++) {
+      contentstr += '<td>' + row[j] + '</td>' + '\n';
+    }
+    contentstr += '</tr>' + '\n';
+  }
+
+
+  newHTML = '<table class="">' + '\n' +
+              '<thead>' + '\n' +
+                '<tr>' + '\n' +
+                  headerstr +
+                '</tr>' + '\n' +
+              '</thead>' + '\n' +
+              '<tbody>' + '\n' +
+                  contentstr +
+              '</tbody>' + '\n' +
+            '</table';
+  tdiv.innerHTML = newHTML;
+  tdiv.style.height = '400px';
+  tdiv.style.overflow = 'auto';
+  return indextosample;
 }
 
 function updateHistogramParams(identifier) {
@@ -95,19 +156,21 @@ function updateHistogramParams(identifier) {
   ylo   = Number(document.getElementById("lower" + identifier).value);
   yhi   = Number(document.getElementById("upper" + identifier).value);
   context      = document.getElementById('hist'  + identifier).getContext('2d')
-  thisy = derived['y' + identifier];
-  console.log('Updating ' + identifier);
-  console.log('Nbins ' + nbins);
-  console.log('ylo ' + ylo);
-  console.log('yhi ' + yhi);
+  thisy = derived[identifier];
   updateHistogram(thisy,nbins,ylo,yhi,context);
 }
 
 function updateHistogram(y,nbins,ylo,yhi,context) {
   nbins = Number(nbins);
   bins = linspace(ylo-0.01, yhi+0.01, nbins+1);
-  histpos = histogram(y, bins);
-  makeBarPlot(histpos[0],histpos[1],'',context);
+
+  bardata = {}; hist = [];
+  Object.keys(y).forEach(function(key,index) {
+    hist = histogram(y[key], bins);
+    bardata[key] = hist[1];
+  });
+
+  makeBarPlot(hist[0], bardata, context);
 }
 
 function makeLinePlot(x,y,label,context) {
@@ -117,7 +180,7 @@ function makeLinePlot(x,y,label,context) {
                         label: label,
                         fill: false,
                         lineTension: 0,
-                        borderColor: "rgba(75,92,192,1)",
+                        borderColor: linecolors[0],
                         pointRadius: 0
                       }
                     ],
@@ -160,24 +223,28 @@ function makeLinePlot(x,y,label,context) {
                       });
 }
 
-function makeBarPlot(x,y,label,context) {
+// x is a 1D array of bin centres, y is a 2D array of stacked bars
+function makeBarPlot(x,y,context) {
 
   for (i = 0; i < x.length; i++) {
     x[i] = Math.round(x[i]*10)/10;
   }
 
-  var linedata = {datasets: [
-                      {
-                        data: y,
-                        labels: x,
-                        fill: false,
-                        lineTension: 0,
-                        backgroundColor: "rgba(75,92,192,1)",
-                        pointRadius: 0
-                      }
-                    ],
-                  labels: x};
+  datasets = [];
 
+  Object.keys(y).forEach(function(key,index) {
+    thisdataset = { //Default values for bar charts
+      fill: false,
+      lineTension: 0,
+      backgroundColor: linecolors[index],
+      pointRadius: 0,
+      data: y[key],
+      label: key
+    };
+    datasets.push(thisdataset);
+  });
+
+  var linedata = {datasets: datasets, labels: x};
 
 
   var chart = new Chart(context , {
@@ -185,8 +252,12 @@ function makeBarPlot(x,y,label,context) {
                         data: linedata,
                         borderCapStyle: 'round',
                         options: {
+                          legend: {
+                            display: true
+                          },
                           scales: {
                             xAxes: [{
+                              stacked: true,
                               ticks: {
                                 maxTicksLimit: 50
                               },
@@ -196,6 +267,7 @@ function makeBarPlot(x,y,label,context) {
                               },
                               }],
                             yAxes: [{
+                              stacked: true,
                               scaleLabel: {
                                 display: true,
                                 labelString: 'Frequency'
@@ -213,6 +285,22 @@ function makeBarPlot(x,y,label,context) {
                           }
                         }
                       });
+}
+
+function minimiseTable() {
+  if (headers.length > 0){ // Do nothing if no data
+    div = document.getElementById('csvheadtable');
+
+    if(div.style.overflow == 'hidden') {
+      div.style.overflow = 'auto';
+      div.style.height = '400px';
+    } else {
+      div.style.overflow = 'hidden';
+      div.style.height = '60px';
+      div.scrollTop = 0;
+    }
+  }
+
 }
 
 document.getElementById('file-input').addEventListener('change', readSingleFile, false);
