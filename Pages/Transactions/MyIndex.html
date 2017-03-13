@@ -93,6 +93,26 @@
 
     <div class="row">
       <div class="three columns">
+        <h5>Negative transactions</h5>
+        This is a histogram of the debits from the account.<br><br>
+        <form action="javascript:updateHistogramParams('neg');">
+          Number of bins
+          <input type="number" id="nbinsneg" min="1" max="50" value="20" style="width: 60px;">
+          <br>Range<br>
+          <input type="number" id="lowerneg" max="0" value="-200" style="width: 80px;">
+          -
+          <input type="number" id="upperneg" max="0" value="0" style="width: 80px;">
+          <input type="submit" style="visibility: hidden;" />
+        </form>
+
+      </div>
+      <div class="nine columns">
+        <canvas id="histneg"></canvas>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="three columns">
         <h5>Positive transactions</h5>
         This is a histogram of the credits to the account.<br><br>
 
@@ -109,26 +129,6 @@
       </div>
       <div class="nine columns">
         <canvas id="histpos"></canvas>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="three columns">
-        <h5>Negative transactions</h5>
-        This is a histogram of the debits from the account.<br><br>
-        <form action="javascript:updateHistogramParams('neg');">
-          Number of bins
-          <input type="number" id="nbinsneg" min="1" max="50" value="20" style="width: 60px;">
-          <br>Range<br>
-          <input type="number" id="lowerneg" max="0" value="-200" style="width: 80px;">
-          -
-          <input type="number" id="upperneg" max="0" value="0" style="width: 80px;">
-          <input type="submit" style="visibility: hidden;" />
-        </form>
-
-      </div>
-      <div class="nine columns">
-        <canvas id="histneg"></canvas>
       </div>
     </div>
 

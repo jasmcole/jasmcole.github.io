@@ -4,25 +4,26 @@ Chart.defaults.global.legend.display = false;
 var x = [], y = [], derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = [], data = [];
 var indextosample = -1;
 var headers = [], filename;
-var linecolors = ["rgba(52,195,240,1)", "rgba(75,92,192,1)", "rgba(192,75,75,1)"];
-var categories = ['Travel', 'Bills', 'Work', 'Leisure', 'Other'];
+var linecolors = ["rgba(52,195,240,1)", "#9b59b6", "#3498db", "#95a5a6", "#e74c3c", "#34495e", "#2ecc71"];
+var categories = ['Cash withdrawal', 'Travel', 'Bills', 'Work', 'Leisure', 'Food', 'Drink', 'Gifts', 'Salary', 'Other income', 'Other'];
 var catindex = 0, datacats = [];
 var charts = {};
 
 
 // Do initial page setup
 var context = document.getElementById('cumulative').getContext('2d');
-makeLinePlot(0,0,'Cumulative total',context);
+charts['cumulative'] = makeLinePlot(0,0,'Cumulative total',context);
 context = document.getElementById('transactions').getContext('2d');
-makeLinePlot(0,0,'Transactions',context);
+charts['transactions'] = makeLinePlot(0,0,'Transactions',context);
 
-updateHistogramParams('pos');
-updateHistogramParams('neg');
+charts['pos'] = updateHistogramParams('pos');
+charts['neg'] = updateHistogramParams('neg');
 
 updateCategorySelect(categories);
 
 document.getElementById('file-input').addEventListener('change', readSingleFile, false);
 document.getElementById('categoryInput').addEventListener('change', assignCategory, false);
+document.getElementById('categoryInput').addEventListener('focus', resetCategory, false);
 
 // End initial page setup
 
@@ -94,6 +95,9 @@ function createPlots(indextosample) {
       document.getElementById('headerBtn' + i).className = "button-dark";
     }
   }
+  // Reset everything
+  derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = []
+
   csum[0] = 0;
   x[0] = 0;
   y[0] = data[0].split(',')[indextosample];
@@ -128,7 +132,7 @@ function createPlots(indextosample) {
   }
 
   for (chart in charts) {
-    chart.destroy();
+    charts[chart].destroy();
   }
 
   context = document.getElementById('cumulative').getContext('2d');
@@ -191,9 +195,10 @@ function updateHistogramParams(identifier) {
   context      = document.getElementById('hist'  + identifier).getContext('2d')
   thisy = derived[identifier];
   if (identifier in charts) {
+    console.log('Destroyed chart ' + identifier)
     charts[identifier].destroy();
   }
-  charts[identifier] = updateHistogram(thisy,nbins,ylo,yhi,context);
+  return updateHistogram(thisy,nbins,ylo,yhi,context);
 }
 
 function updateHistogram(y,nbins,ylo,yhi,context) {
@@ -272,7 +277,7 @@ function makeBarPlot(x,y,context) {
     thisdataset = { //Default values for bar charts
       fill: false,
       lineTension: 0,
-      backgroundColor: linecolors[index],
+      backgroundColor: linecolors[index % linecolors.length],
       pointRadius: 0,
       data: y[key],
       label: key
@@ -363,7 +368,7 @@ function assignCategory() {
     thisdescription = row[5];
     thisdescription = thisdescription.split('  ')[0];
     if (thisdescription == description) {
-      datacats[catindex] = category;
+      datacats[i] = category;
       totalchanged += 1;
     }
   }
@@ -373,7 +378,8 @@ function assignCategory() {
   catindex = datacats.indexOf('Uncategorised');
   console.log(catindex)
   updateTransactionDescription(catindex);
-  createPlots();
+  createPlots(indextosample);
+  resetCategory();
 }
 
 function updateTransactionDescription(catindex) {
@@ -382,4 +388,10 @@ function updateTransactionDescription(catindex) {
   row = row.split(',');
   description = row[5];
   el.value = description;
+}
+
+function resetCategory() {
+  var catinput = document.getElementById('categoryInput');
+  catinput.selectedIndex = -1;
+  console.log('Reset category index')
 }
