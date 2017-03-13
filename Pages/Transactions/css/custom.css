@@ -32,3 +32,10 @@ label.filebutton input[type="file"] {
 #filestatus {
   margin-left: 10px;
 }
+
+.docs-header {
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  letter-spacing: .2rem;
+  font-weight: 600;
+}
