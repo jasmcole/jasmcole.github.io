@@ -1,12 +1,24 @@
 Chart.defaults.global.hover.mode = 'nearest';
 Chart.defaults.global.legend.display = false;
+Chart.defaults.global.animation.duration = 0;
+Chart.defaults.global.responsive = true;
 
 var x = [], y = [], derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = [], data = [];
-var indextosample = -1;
+var indextosample = -1, indexofdescription = -1;
 var headers = [], filename;
-var linecolors = ["rgba(52,195,240,1)", "#9b59b6", "#3498db", "#95a5a6", "#e74c3c", "#34495e", "#2ecc71"];
+var linecolors = ["rgba(52,195,240,1)", // python Vega10 colormap
+                  "#1f77b4",
+                  "#ff7f0e",
+                  "#2ca02c",
+                  "#d62728",
+                  "#9467bd",
+                  "#8c564b",
+                  "#e377c2",
+                  "#7f7f7f",
+                  "#bcbd22",
+                  "#17becf"];
 var categories = ['Cash withdrawal', 'Travel', 'Bills', 'Work', 'Leisure', 'Food', 'Drink', 'Gifts', 'Salary', 'Other income', 'Other'];
-var catindex = 0, datacats = [];
+var catindex = 1, datacats = []; //catindex at 1 to avoid first row
 var charts = {};
 
 
@@ -20,10 +32,14 @@ charts['pos'] = updateHistogramParams('pos');
 charts['neg'] = updateHistogramParams('neg');
 
 updateCategorySelect(categories);
+resetCategory();
 
 document.getElementById('file-input').addEventListener('change', readSingleFile, false);
 document.getElementById('categoryInput').addEventListener('change', assignCategory, false);
 document.getElementById('categoryInput').addEventListener('focus', resetCategory, false);
+
+document.getElementById('transactionColumnInput').addEventListener('change', updateIndexToSample, false);
+document.getElementById('descriptionColumnInput').addEventListener('change', updateIndexOfDescription, false);
 
 // End initial page setup
 
@@ -72,11 +88,12 @@ function histogram(y, bins) {
 }
 
 function displayContents(contents) {
+  var indextosample = -1, indexofdescription = -1;
   data = contents.split(/\r\n|\n|\r/);
   headers = data[0].split(',');
   data.reverse();
-  //data = data.slice(300, data.length);
-  datacats = []; catindex = 1;
+  updateColumnSelects(headers);
+  datacats = [];
   updateTransactionDescription(catindex);
   indextosample = updateTable(headers);
   if (indextosample > 0) {
@@ -88,13 +105,6 @@ function createPlots(indextosample) {
   document.getElementById('filestatus').innerHTML =
     'Uploaded ' + filename + ', analysing column ' + headers[indextosample];
 
-  for (i = 0; i < headers.length; i++) {
-    if (i == indextosample) {
-      document.getElementById('headerBtn' + i).className = "button-primary";
-    } else {
-      document.getElementById('headerBtn' + i).className = "button-dark";
-    }
-  }
   // Reset everything
   derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = []
 
@@ -153,11 +163,9 @@ function updateTable(headers) {
   for (i = 0; i < headers.length; i++) {
     if (headers[i] == 'Amount') {
       indextosample = i;
-      buttonstr = '<th><button class="button-primary" id="headerBtn' + i + '" onclick="createPlots(' + i + ')">' + headers[i] + '</button></th>' + '\n';
-      console.log(buttonstr);
-      headerstr += buttonstr;
+      headerstr += '<th>' + headers[i] + '</th>' + '\n';
     } else {
-      headerstr += '<th><button class="button-dark" id="headerBtn' + i + '" onclick="createPlots(' + i + ')">' + headers[i] + '</button></th>' + '\n';
+      headerstr += '<th>' + headers[i] + '</th>' + '\n';
     }
   }
 
@@ -192,12 +200,17 @@ function updateHistogramParams(identifier) {
   nbins = Number(document.getElementById("nbins" + identifier).value);
   ylo   = Number(document.getElementById("lower" + identifier).value);
   yhi   = Number(document.getElementById("upper" + identifier).value);
-  context      = document.getElementById('hist'  + identifier).getContext('2d')
   thisy = derived[identifier];
   if (identifier in charts) {
     console.log('Destroyed chart ' + identifier)
     charts[identifier].destroy();
+    document.getElementById('hist'  + identifier + 'div').innerHTML = '';
+    var canvas = document.createElement('canvas');
+    div = document.getElementById('hist'  + identifier + 'div')
+    canvas.id     = 'hist'  + identifier;
+    div.appendChild(canvas)
   }
+  context = document.getElementById('hist'  + identifier).getContext('2d')
   return updateHistogram(thisy,nbins,ylo,yhi,context);
 }
 
@@ -216,6 +229,7 @@ function updateHistogram(y,nbins,ylo,yhi,context) {
 }
 
 function makeLinePlot(x,y,label,context) {
+
   var linedata = {datasets: [
                       {
                         data: y,
@@ -236,7 +250,7 @@ function makeLinePlot(x,y,label,context) {
                           scales: {
                             xAxes: [{
                               ticks: {
-                                maxTicksLimit: 50
+                                maxTicksLimit: 20
                               },
                               scaleLabel: {
                                 display: true,
@@ -299,7 +313,7 @@ function makeBarPlot(x,y,context) {
                             xAxes: [{
                               stacked: true,
                               ticks: {
-                                maxTicksLimit: 50
+                                maxTicksLimit: 20
                               },
                               scaleLabel: {
                                 display: true,
@@ -337,7 +351,7 @@ function minimiseTable() {
       div.style.height = '400px';
     } else {
       div.style.overflow = 'hidden';
-      div.style.height = '60px';
+      div.style.height = '0px';
       div.scrollTop = 0;
     }
   }
@@ -353,45 +367,86 @@ function updateCategorySelect(categories) {
 
 
 function assignCategory() {
-  category = document.getElementById('categoryInput').value;
+  if (indexofdescription > -1) {
+    category = document.getElementById('categoryInput').value;
 
-  row = data[catindex];
-  row = row.split(',');
-  description = row[5];
-  description = description.split('  ')[0];
-  console.log('Categorising ' + description + ' as ' + category)
-
-  var totalchanged = 0;
-  for (i = 1; i < data.length; i++){
-    row = data[i];
+    row = data[catindex];
     row = row.split(',');
-    thisdescription = row[5];
-    thisdescription = thisdescription.split('  ')[0];
-    if (thisdescription == description) {
-      datacats[i] = category;
-      totalchanged += 1;
+    description = row[indexofdescription];
+    description = description.split('  ')[0];
+    console.log('Categorising ' + description + ' as ' + category)
+
+    var totalchanged = 0;
+    for (i = 1; i < data.length; i++){
+      row = data[i];
+      row = row.split(',');
+      thisdescription = row[indexofdescription];
+      thisdescription = thisdescription.split('  ')[0];
+      if (thisdescription == description) {
+        datacats[i] = category;
+        totalchanged += 1;
+      }
     }
+
+    console.log('Updated ' + totalchanged + ' entries');
+
+    catindex = datacats.indexOf('Uncategorised');
+    console.log(catindex)
+    if (catindex > -1) {
+      updateTransactionDescription(catindex);
+      createPlots(indextosample);
+    } else {
+      document.getElementById('transactionDescription').value = 'All transactions categorised.'
+    }
+  } else {
+    alert('Select the correct description column first.')
   }
-
-  console.log('Updated ' + totalchanged + ' entries');
-
-  catindex = datacats.indexOf('Uncategorised');
-  console.log(catindex)
-  updateTransactionDescription(catindex);
-  createPlots(indextosample);
   resetCategory();
 }
 
 function updateTransactionDescription(catindex) {
-  el = document.getElementById('transactionDescription');
-  row = data[catindex];
-  row = row.split(',');
-  description = row[5];
-  el.value = description;
+  var el = document.getElementById('transactionDescription');
+  if (indexofdescription > -1) {
+    row = data[catindex];
+    row = row.split(',');
+    description = row[indexofdescription];
+    el.value = description;
+  } else {
+    el.value = 'Select description column.'
+  }
 }
 
 function resetCategory() {
   var catinput = document.getElementById('categoryInput');
   catinput.selectedIndex = -1;
   console.log('Reset category index')
+}
+
+function updateColumnSelects(headers) {
+  var transselect = document.getElementById('transactionColumnInput');
+  var descselect = document.getElementById('descriptionColumnInput');
+
+  transselect.options.length = 0;
+  descselect.options.length = 0;
+
+  for (h in headers) {
+    var opt = document.createElement('option');
+    var opt2 = document.createElement('option');
+    opt.value = headers[h]; opt.innerHTML = headers[h];
+    opt2.value = headers[h]; opt2.innerHTML = headers[h];
+    descselect.appendChild(opt);
+    transselect.appendChild(opt2);
+  }
+}
+
+function updateIndexToSample() {
+  var transselect = document.getElementById('transactionColumnInput');
+  indextosample = headers.indexOf(transselect.value);
+  createPlots(indextosample);
+}
+
+function updateIndexOfDescription() {
+  var descselect = document.getElementById('descriptionColumnInput');
+  indexofdescription = headers.indexOf(descselect.value);
+  updateTransactionDescription(catindex)
 }

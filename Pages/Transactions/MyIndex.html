@@ -40,10 +40,17 @@
       </div>
       <div class="row">
         <div class="three columns">
-          Showing up to 50 rows.
+          Showing up to 50 rows. Select the appropriate columns to analyse, containing the transaction value description.
         </div>
-        <div class="nine columns">
-          <p>Select the column containing the transactions data, if it has not already been automatically selected.</p>
+        <div class="four columns">
+          <label>Transactions column</label>
+          <select id="transactionColumnInput" style="color: #000; min-width: 150px;">
+          </select>
+        </div>
+        <div class="four columns">
+          <label>Description column</label>
+          <select id="descriptionColumnInput" style="color: #000; min-width: 150px;">
+          </select>
         </div>
       </div>
 
@@ -73,7 +80,7 @@
     <h4 class="docs-header">Analysis</h4>
     <div class="row">
       <div class="three columns">
-        <h5>Cumulative total</h5>
+        <h5>Cumulative change</h5>
         This is the running total of the transactions.
       </div>
       <div class="nine columns">
@@ -83,17 +90,7 @@
 
     <div class="row">
       <div class="three columns">
-        <h5>Individual transactions</h5>
-        These are all of the transactions from the file.
-      </div>
-      <div class="nine columns">
-        <canvas id="transactions"></canvas>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="three columns">
-        <h5>Negative transactions</h5>
+        <h5>Outgoings</h5>
         This is a histogram of the debits from the account.<br><br>
         <form action="javascript:updateHistogramParams('neg');">
           Number of bins
@@ -107,13 +104,26 @@
 
       </div>
       <div class="nine columns">
-        <canvas id="histneg"></canvas>
+        <div id="histnegdiv">
+          <canvas id="histneg"></canvas>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="three columns">
+        <h5>Individual transactions</h5>
+        These are all of the transactions from the file.
+      </div>
+      <div class="nine columns">
+        <canvas id="transactions"></canvas>
       </div>
     </div>
 
     <div class="row">
       <div class="three columns">
-        <h5>Positive transactions</h5>
+        <h5>Income</h5>
         This is a histogram of the credits to the account.<br><br>
 
         <form action="javascript:updateHistogramParams('pos');">
@@ -128,7 +138,9 @@
 
       </div>
       <div class="nine columns">
-        <canvas id="histpos"></canvas>
+        <div id="histposdiv">
+          <canvas id="histpos"></canvas>
+        </div>
       </div>
     </div>
 
