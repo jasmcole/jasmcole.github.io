@@ -48,7 +48,7 @@
 
   </div>
 
-  <div style="background-color: #222222; color: #FFFFFF;">
+  <div id="analysisdiv" style="background-color: #222222; color: #FFFFFF; visibility: hidden; overflow: hidden; height: 0px;">
     <div class="container">
       <div class="row">
         <div class="three columns" style="margin-top: 10px;">
@@ -63,7 +63,7 @@
       </div>
       <div class="row">
         <div class="three columns">
-          Showing up to 50 rows. Select the appropriate columns to analyse.
+          Showing up to 50 rows. Select appropriate columns (e.g. 'Memo' and 'Amount')
         </div>
         <div class="six columns">
           <label>Description column</label>
@@ -111,7 +111,7 @@
   </div>
 
 
-  <div class="container" style="margin-top: 10px;">
+  <div id="plotsdiv" class="container" style="margin-top: 10px; visibility: hidden; overflow: hidden; height: 0px">
     <div class="row">
       <div class="three columns">
         <h5>Cumulative change</h5>
@@ -180,14 +180,33 @@
 
   </div>
 
-  <div style="background-color: #222222">
-    <div class="container">
-      <div class="row" style="margin-top: 30px; color: #FFF">
-        <div class="twelve columns" style="margin-top: 30px;">
-          <h4>About</h4>
-          <p> Written by Jason Cole, author of <a href="www.jasmcole.com">Almost Looks Like Work</a>.</p>
+  <div style="background-color: #222">
+    <div id="summarydiv" class="container" style="color: #FFF; visibility: hidden; overflow: hidden; height: 0px">
+      <div class="twelve columns" style="margin-top: 15px;">
+        <h4>Summary statistics</h4>
+      </div>
 
-          <p>See the code at <a href="www.github.com/jasmcole">www.github.com/jasmcole</a></p>
+      <div class="row" >
+        <div id="summarytable" class="eight columns">
+        </div>
+        <div class="four columns">
+          <div style="height: 70px">
+          </div>
+          <canvas id="summarychart" style="display: block; margin: 0 auto;"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="background-color: #FFF">
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns" style="margin-top: 10px;">
+          <h4>About</h4>
+          <p> Written by Jason Cole, author of <a href="http://www.jasmcole.com">Almost Looks Like Work</a>. Makes use of the <a href="http://www.chartjs.org/">Charts.js</a> plotting library, and <a href="http://getskeleton.com/">Skeleton</a> for the CSS.</p>
+
+          <p>See the code on <a href="https://github.com/jasmcole/jasmcole.github.io/blob/master/Pages/Transactions/script.js">Github</a></p>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ Chart.defaults.global.responsive = true;
 var x = [], y = [], derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = [], data = [];
 var indextosample = -1, indexofdescription = -1;
 var headers = [], filename;
-var linecolors = ["rgba(52,195,240,1)", // python Vega10 colormap
+var linecolors = ["#33C3F0", // python Vega10 colormap
                   "#1f77b4",
                   "#ff7f0e",
                   "#2ca02c",
@@ -27,9 +27,10 @@ var context = document.getElementById('cumulative').getContext('2d');
 charts['cumulative'] = makeLinePlot(0,0,'Cumulative total',context);
 context = document.getElementById('transactions').getContext('2d');
 charts['transactions'] = makeLinePlot(0,0,'Transactions',context);
-
 charts['pos'] = updateHistogramParams('pos');
 charts['neg'] = updateHistogramParams('neg');
+context = document.getElementById('summarychart').getContext('2d');
+charts['summary'] = makePieChart(context);
 
 updateCategorySelect(categories);
 resetCategory();
@@ -57,6 +58,9 @@ function readSingleFile(e) {
     var filename = document.getElementById('file-input').files[0].name;
     document.getElementById('filestatus').innerHTML = filename;
     displayContents(contents);
+    document.getElementById('analysisdiv').style.visibility = 'visible';
+    document.getElementById('analysisdiv').style.overflow = 'auto';
+    document.getElementById('analysisdiv').style.height = 'auto';
   };
   reader.readAsText(file);
 }
@@ -73,6 +77,7 @@ function readDatacatsFile(e) {
     document.getElementById('datacatsstatus').innerHTML = filename;
     datacats = JSON.parse(contents);
     createPlots(indextosample);
+    updateSummaryTable();
   };
   reader.readAsText(file);
 }
@@ -114,12 +119,17 @@ function displayContents(contents) {
   document.getElementById('datacatsstatus').innerHTML = 'No file uploaded.';
   updateTransactionDescription(catindex);
   indextosample = updateTable(headers);
-  if (indextosample > 0) {
+  if (indextosample > -1) {
     createPlots(indextosample);
   }
 }
 
 function createPlots(indextosample) {
+  if (indextosample > -1) {
+    document.getElementById('plotsdiv').style.visibility = 'visible';
+    document.getElementById('plotsdiv').style.overflow = 'auto';
+    document.getElementById('plotsdiv').style.height = 'auto';
+  }
 
   // Reset everything
   derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = []
@@ -169,6 +179,9 @@ function createPlots(indextosample) {
 
   charts['pos'] = updateHistogramParams('pos');
   charts['neg'] = updateHistogramParams('neg');
+
+  context = document.getElementById('summarychart').getContext('2d');
+  charts['summary'] = makePieChart(context);
 }
 
 function updateTable(headers) {
@@ -218,7 +231,6 @@ function updateHistogramParams(identifier) {
   yhi   = Number(document.getElementById("upper" + identifier).value);
   thisy = derived[identifier];
   if (identifier in charts) {
-    console.log('Destroyed chart ' + identifier)
     charts[identifier].destroy();
     document.getElementById('hist'  + identifier + 'div').innerHTML = '';
     var canvas = document.createElement('canvas');
@@ -304,10 +316,11 @@ function makeBarPlot(x,y,context) {
   datasets = [];
 
   Object.keys(y).forEach(function(key,index) {
+    var colindex = categories.indexOf(key);
     thisdataset = { //Default values for bar charts
       fill: false,
       lineTension: 0,
-      backgroundColor: linecolors[index % linecolors.length],
+      backgroundColor: linecolors[colindex % linecolors.length],
       pointRadius: 0,
       data: y[key],
       label: key
@@ -409,12 +422,11 @@ function assignCategory() {
     document.getElementById('status').innerHTML = 'Updated ' + totalchanged + ' entries';
 
     catindex = datacats.indexOf('Uncategorised');
-    console.log(catindex)
     if (catindex > -1) {
       document.getElementById('progressbar').style.width = Math.round(100*totalcategorised/data.length) + 'vw';
-      console.log()
       updateTransactionDescription(catindex);
       createPlots(indextosample);
+      updateSummaryTable();
     } else {
       document.getElementById('transactionDescription').value = 'All transactions categorised.';
       document.getElementById('transactionAmount').value = ' ';
@@ -491,4 +503,85 @@ function downloadDatacats() {
   a.href        = url;
   a.click();
   a.parentNode.removeChild(a);
+}
+
+function updateSummaryTable() {
+  var tdiv = document.getElementById('summarytable');
+  var summaryheaders = ['Category', '25th percentile', 'Median', '75th percentile', 'Total'];
+
+  var headerstr = '';
+  for (i = 0; i < summaryheaders.length; i++) {
+    headerstr += '<th>' + summaryheaders[i] + '</th>' + '\n';
+  }
+
+  var contentstr = '';
+
+  for (i = 0; i < categories.length; i++) {
+    var total = 0;
+    var median = 0;
+    var q25 = 0;
+    var q75 = 0;
+    var thistrans = [0];
+    if (categories[i] in derived['neg']) {
+      if (derived['neg'][categories[i]].length > 0) {
+        thistrans = derived['neg'][categories[i]];
+        thistrans.sort(function(a,b){return a - b});
+      }
+    }
+
+    total = thistrans.reduce(function(a, b){return a+b;});
+    median = thistrans[Math.floor(0.5*thistrans.length)];
+    q25 = thistrans[Math.floor(0.75*thistrans.length)];
+    q75 = thistrans[Math.floor(0.25*thistrans.length)];
+
+    contentstr += '<tr bgcolor="' + linecolors[i] + '">' + '\n';
+    contentstr += '<td>' + categories[i] + '</td>' + '\n';
+    contentstr += '<td>' + formatDebit(q25) + '</td>' + '\n';
+    contentstr += '<td>' + formatDebit(median) + '</td>' + '\n';
+    contentstr += '<td>' + formatDebit(q75) + '</td>' + '\n';
+    contentstr += '<td>' + formatDebit(total) + '</td>' + '\n';
+    contentstr += '</tr>' + '\n';
+  }
+
+  newHTML = '<table class="">' + '\n' +
+              '<thead>' + '\n' +
+                '<tr>' + '\n' +
+                  headerstr +
+                '</tr>' + '\n' +
+              '</thead>' + '\n' +
+              '<tbody>' + '\n' +
+                  contentstr +
+              '</tbody>' + '\n' +
+            '</table';
+  tdiv.innerHTML = newHTML;
+
+  document.getElementById('summarydiv').style.visibility = 'visible';
+  document.getElementById('summarydiv').style.overflow = 'auto';
+  document.getElementById('summarydiv').style.height = 'auto';
+}
+
+function makePieChart(ctx) {
+  var totals = linspace(0,0,categories.length);
+  for (i = 0; i < categories.length; i++) {
+    totals[i] = 0;
+    if (categories[i] in derived['neg']) {
+      if (derived['neg'][categories[i]].length > 0) {
+        totals[i] = -Math.round(derived['neg'][categories[i]].reduce(function(a, b){return a+b;}));
+      }
+    }
+  }
+
+  var data = {labels: categories, datasets: [{data: totals, backgroundColor: linecolors.slice(0)}]};
+
+  var myDoughnutChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: data
+  });
+  return myDoughnutChart;
+}
+
+function formatDebit(num) {
+  num *= -1; num = Math.round(100*num)/100;
+  num = '£' + num;
+  return num;
 }
