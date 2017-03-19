@@ -11,16 +11,39 @@
   <div class="container">
     <div class="row">
       <h1>Transaction visualisation</h1>
-      This is a simple test of plotting and basic Javascript. All code should be considered to be in a half-finished state unless otherwise stated. Please send any bug reports or questions to me at the github link at the bottom of the page.
-      <br><br>
+      <ul>
+        <li>
+          Step 1: Upload a .csv file containing your transaction history
+        </li>
+        <li>
+          Step 2: Select which columns in the file contain the transaction description, and the transaction amount<br>
+        </li>
+        <li>
+          Step 3: Save your selected categorisations.
+        </li>
+      </ul>
     </div>
 
     <div class="row">
-      <label class="filebutton">
-        <input type="file" id="file-input" required/>
-        <span>Upload file</span>
-      </label>
-      <span id='filestatus'>No file uploaded</span>
+      <div class="five columns">
+        <label class="filebutton">
+          <input type="file" id="file-input" required/>
+          <span>Upload transactions file</span>
+        </label>
+        <span id='filestatus'>No file uploaded</span>
+      </div>
+
+      <div class="five columns">
+        <label class="filebutton">
+          <input type="file" id="datacats-input" required/>
+          <span>Upload categorisation</span>
+        </label>
+        <span id='datacatsstatus'>No file uploaded</span>
+      </div>
+
+      <div class="two columns">
+        <button id="saveDatacatsBtn" class="button-primary", onclick="downloadDatacats()">Save categories</button>
+      </div>
     </div>
 
   </div>
@@ -40,16 +63,16 @@
       </div>
       <div class="row">
         <div class="three columns">
-          Showing up to 50 rows. Select the appropriate columns to analyse, containing the transaction value description.
+          Showing up to 50 rows. Select the appropriate columns to analyse.
         </div>
-        <div class="four columns">
-          <label>Transactions column</label>
-          <select id="transactionColumnInput" style="color: #000; min-width: 150px;">
-          </select>
-        </div>
-        <div class="four columns">
+        <div class="six columns">
           <label>Description column</label>
           <select id="descriptionColumnInput" style="color: #000; min-width: 150px;">
+          </select>
+        </div>
+        <div class="three columns">
+          <label>Transactions column</label>
+          <select id="transactionColumnInput" style="color: #000; min-width: 150px;">
           </select>
         </div>
       </div>
@@ -64,20 +87,31 @@
               <select id="categoryInput" style="color: #000">
               </select>
           </div>
-          <div class="nine columns">
+          <div class="six columns">
             <label>Transaction description</label>
             <textarea class="u-full-width" placeholder="Waiting for upload..." id="transactionDescription" style="color: #000"></textarea>
+          </div>
+          <div class="three columns">
+            <label>Transaction amount</label>
+            <textarea class="u-full-width" placeholder="Waiting for upload..." id="transactionAmount" style="color: #000"></textarea>
           </div>
         </div>
       </form>
 
+      <div class="row" style="margin-top: -20px;">
+        <div class="three columns">
+          <p id="status"></p>
+        </div>
+      </div>
+
     </div>
   </div>
 
+  <div id="progressbar" style="background-color: #33C3F0; min-height: 5px; width: 0vw;">
+  </div>
 
 
   <div class="container" style="margin-top: 10px;">
-    <h4 class="docs-header">Analysis</h4>
     <div class="row">
       <div class="three columns">
         <h5>Cumulative change</h5>

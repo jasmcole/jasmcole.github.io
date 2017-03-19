@@ -18,7 +18,7 @@ var linecolors = ["rgba(52,195,240,1)", // python Vega10 colormap
                   "#bcbd22",
                   "#17becf"];
 var categories = ['Cash withdrawal', 'Travel', 'Bills', 'Work', 'Leisure', 'Food', 'Drink', 'Gifts', 'Salary', 'Other income', 'Other'];
-var catindex = 1, datacats = []; //catindex at 1 to avoid first row
+var catindex = 1, datacats = []; totalcategorised = 0;//catindex at 1 to avoid first row
 var charts = {};
 
 
@@ -35,6 +35,8 @@ updateCategorySelect(categories);
 resetCategory();
 
 document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+document.getElementById('datacats-input').addEventListener('change', readDatacatsFile, false);
+
 document.getElementById('categoryInput').addEventListener('change', assignCategory, false);
 document.getElementById('categoryInput').addEventListener('focus', resetCategory, false);
 
@@ -52,10 +54,25 @@ function readSingleFile(e) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var contents = e.target.result;
-    filename = document.getElementById('file-input').files[0].name;
-    document.getElementById('filestatus').innerHTML = 'Uploaded ' + filename;
-    document.getElementById('togglesummaryBtn').style.visbility = 'visible';
+    var filename = document.getElementById('file-input').files[0].name;
+    document.getElementById('filestatus').innerHTML = filename;
     displayContents(contents);
+  };
+  reader.readAsText(file);
+}
+
+function readDatacatsFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    var filename = document.getElementById('datacats-input').files[0].name;
+    document.getElementById('datacatsstatus').innerHTML = filename;
+    datacats = JSON.parse(contents);
+    createPlots(indextosample);
   };
   reader.readAsText(file);
 }
@@ -94,6 +111,7 @@ function displayContents(contents) {
   data.reverse();
   updateColumnSelects(headers);
   datacats = [];
+  document.getElementById('datacatsstatus').innerHTML = 'No file uploaded.';
   updateTransactionDescription(catindex);
   indextosample = updateTable(headers);
   if (indextosample > 0) {
@@ -102,8 +120,6 @@ function displayContents(contents) {
 }
 
 function createPlots(indextosample) {
-  document.getElementById('filestatus').innerHTML =
-    'Uploaded ' + filename + ', analysing column ' + headers[indextosample];
 
   // Reset everything
   derived = {'pos': {'Uncategorised': [0]}, 'neg': {'Uncategorised': [0]}}, csum = []
@@ -161,7 +177,7 @@ function updateTable(headers) {
 
   headerstr = '';
   for (i = 0; i < headers.length; i++) {
-    if (headers[i] == 'Amount') {
+    if (headers[i] == 'sAmount') {
       indextosample = i;
       headerstr += '<th>' + headers[i] + '</th>' + '\n';
     } else {
@@ -388,15 +404,20 @@ function assignCategory() {
       }
     }
 
-    console.log('Updated ' + totalchanged + ' entries');
+    totalcategorised += totalchanged;
+
+    document.getElementById('status').innerHTML = 'Updated ' + totalchanged + ' entries';
 
     catindex = datacats.indexOf('Uncategorised');
     console.log(catindex)
     if (catindex > -1) {
+      document.getElementById('progressbar').style.width = Math.round(100*totalcategorised/data.length) + 'vw';
+      console.log()
       updateTransactionDescription(catindex);
       createPlots(indextosample);
     } else {
-      document.getElementById('transactionDescription').value = 'All transactions categorised.'
+      document.getElementById('transactionDescription').value = 'All transactions categorised.';
+      document.getElementById('transactionAmount').value = ' ';
     }
   } else {
     alert('Select the correct description column first.')
@@ -405,14 +426,23 @@ function assignCategory() {
 }
 
 function updateTransactionDescription(catindex) {
-  var el = document.getElementById('transactionDescription');
+  var descel = document.getElementById('transactionDescription');
+  var amountel = document.getElementById('transactionAmount');
+  var row = data[catindex];
+  row = row.split(',');
+
   if (indexofdescription > -1) {
-    row = data[catindex];
-    row = row.split(',');
-    description = row[indexofdescription];
-    el.value = description;
+    var description = row[indexofdescription];
+    descel.value = description;
   } else {
-    el.value = 'Select description column.'
+    descel.value = 'Select description column.'
+  }
+
+  if (indextosample > -1) {
+    var amount = row[indextosample];
+    amountel.value = amount;
+  } else {
+    amountel.value = 'Select transactions column.'
   }
 }
 
@@ -442,11 +472,23 @@ function updateColumnSelects(headers) {
 function updateIndexToSample() {
   var transselect = document.getElementById('transactionColumnInput');
   indextosample = headers.indexOf(transselect.value);
+  updateTransactionDescription(catindex);
   createPlots(indextosample);
 }
 
 function updateIndexOfDescription() {
   var descselect = document.getElementById('descriptionColumnInput');
   indexofdescription = headers.indexOf(descselect.value);
-  updateTransactionDescription(catindex)
+  updateTransactionDescription(catindex);
+}
+
+function downloadDatacats() {
+  var json = JSON.stringify(datacats);
+  var blob = new Blob([json], {type: "application/json"});
+  var url  = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.download    = "datacats.json";
+  a.href        = url;
+  a.click();
+  a.parentNode.removeChild(a);
 }

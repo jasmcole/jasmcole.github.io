@@ -5,31 +5,40 @@ label.filebutton input[type="file"] {
 }
 
 /* http://stackoverflow.com/questions/21842274/cross-browser-custom-styling-for-file-upload-button */
+/* Copied styles from skeleton button-primary */
 .filebutton {
-    border: 0px solid #AAA;
-    border-radius: 2px;
-    padding: 10px 10px;
-    margin-bottom: 10px;
-    background: #DDD;
-    display: inline-block;
-    color: #FFF;
-    background-color: #33C3F0;
-    border-color: #33C3F0;
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box;
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0;
 }
 .filebutton:hover {
-    background: #222;
-}
-.filebutton:active {
-    background: #CCF;
-}
-.filebutton :invalid + span {
-    color: #FFF;
-}
-.filebutton :valid + span {
-    color: #FFF;
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB;
 }
 
+
 #filestatus {
+  margin-left: 10px;
+}
+
+#datacatsstatus {
   margin-left: 10px;
 }
 
