@@ -585,3 +585,7 @@ function formatDebit(num) {
   num = '£' + num;
   return num;
 }
+
+function toggleHelp() {
+  document.getElementById('helpImg').width = 1000 - document.getElementById('helpImg').width;
+}
